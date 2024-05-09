@@ -27,14 +27,15 @@ def start_process(command_params: dict):
     allow_crimes = command_params.get("--allow-crimes", False)
     out_shard_size = command_params.get("--out-shard-size", None)
     lazy_unpickle = command_params.get("--lazy-unpickle", False)
-    yaml_file_path = command_params.get("yaml_file_path", None)
+    yaml_file = command_params.get("yaml_file", None)
     merged_folder = command_params.get("merged_folder", None)
 
     # Check if YAML file path is provided
-    if not yaml_file_path:
+    if not yaml_file:
         raise HTTPException(status_code=400, detail="YAML file path not provided")
 
     # Check if YAML file exists
+    yaml_file_path = os.path.join(UPLOAD_FOLDER, yaml_file)
     if not os.path.exists(yaml_file_path):
         raise HTTPException(status_code=404, detail="YAML file not found")
 
@@ -42,7 +43,7 @@ def start_process(command_params: dict):
         os.makedirs(merged_folder, exist_ok=True)
     # Construct the command
     command = [
-        "!mergekit-yaml",
+        "mergekit-yaml",
         yaml_file_path,
         merged_folder,
         "--copy-tokenizer" if copy_tokenizer else "",
@@ -195,12 +196,12 @@ def get_ram_usage():
     }
 
 
-@app.get("/hdd_usage/{path}")
-def get_hdd_usage(path: str):
+@app.get("/hdd_usage/")
+def get_hdd_usage():
     """
     Get current HDD/SSD usage statistics.
     """
-    hdd_usage = psutil.disk_usage(path)
+    hdd_usage = psutil.disk_usage("/")
     return {
         "total": hdd_usage.total/1024/1024/1024,
         "used": hdd_usage.used/1024/1024/1024,
