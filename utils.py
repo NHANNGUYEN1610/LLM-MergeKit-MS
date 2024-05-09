@@ -70,10 +70,10 @@ def upload_model(merge_dir: str, yaml_config: str):
     api = HfApi(token=os.getenv("HF_TOKEN"))
 
     api.create_repo(
-        repo_id=f"{data['user_name']}/{data["MODEL_NAME"] if "MODEL_NAME" in data else data["models"][0]["model"]}",
+        repo_id=f"{data['user_name']}/{data['MODEL_NAME'] if 'MODEL_NAME'in data else data['models'][0]['model']}",
         repo_type="model"
     )
     api.upload_folder(
-        repo_id=f"{data['user_name']}/{data["MODEL_NAME"] if "MODEL_NAME" in data else data["models"][0]["model"]}",
+        repo_id=f"{data['user_name']}/{data['MODEL_NAME'] if 'MODEL_NAME' in data else data['models'][0]['model']}",
         folder_path=merge_dir,
     )
